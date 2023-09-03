@@ -1,0 +1,56 @@
+import React, { useState, useEffect } from 'react';
+
+function NM() {
+  const [n, setNumbers] = useState([]);
+  const [url, setUrls] = useState('');
+
+  useEffect(() => {
+
+    async function fetchNumbers() {
+      try {
+        const response = await fetch(`/numbers?url=${url}`, { method: 'GET' });
+
+        if (response.ok) {
+          const data = await response.json();
+          setNumbers(data.n);
+        } else {
+          console.error(`Error fetching numbers: ${response.status} - ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error(`Error fetching numbers: ${error.message}`);
+      }
+    }
+
+    fetchNumbers();
+  }, [url]);
+
+  const handleUrlsChange = (e) => {
+    setUrls(e.target.value);
+  };
+
+  return (
+    <div>
+      <h1>Number Management Service</h1>
+      <div>
+        <label htmlFor="urls">Enter URLs:</label>
+        <input
+          type="text"
+          id="urls"
+          placeholder="Enter URLs separated by commas"
+          value={url}
+          onChange={handleUrlsChange}
+        />
+      </div>
+      <div>
+        <h2>Merged Unique Numbers</h2>
+        <ul>
+          {n.map((number) => (
+            <li key={number}>{number}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+export default NM;
